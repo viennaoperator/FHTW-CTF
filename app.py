@@ -14,25 +14,34 @@ def createTables():
 def hello():
     return "FHTW-CTF is up & running!"
 
+#creates docker container with generated flag, returns Challenge Port
 @app.route('/startChallenge/<int:challengeid>')
 def startChallengeWithId(challengeid):
     return dockerfunctions.startChallengeWithId(challengeid)
 
-@app.route('/stopChallenge/<string:name>')
-def stopChallengeWithName(name):
+#Stops a specific container and the linked containers
+@app.route('/stopChallengeContainer/<string:name>')
+def stopChallengeContainer(name):
     return dockerfunctions.stopChallengeWithName(name)
 
+#check, if the http server of the challenge is up & running
 @app.route('/challengeReady/<string:name>')
 def challengeReady(name):
     pass #TODO
 
+#adds a challenge to the CTF
 @app.route('/addChallenge/<string:githuburl>')
 def addChallenge(githuburl):
     pass #TODO
 
+#removes a challenge by id
+@app.route('/removeChallenge/<int:challengeid>')
+def removeChallengeById(challengeid):
+    return utils.removeChallengeById(challengeid)
+#removes a challenge by name
 @app.route('/removeChallenge/<string:name>')
-def removeChallenge(name):
-    pass #TODO
+def removeChallengeByName(name):
+    return utils.removeChallengeByName(name)
 
 @app.route('/listAllChallenges')
 def listAllChallenges():

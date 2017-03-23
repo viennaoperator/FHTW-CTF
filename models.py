@@ -42,6 +42,10 @@ class Challenges(BaseModel):
         self.category = category
         self.type = type
 
+    @classmethod
+    def findByName(cls, name):
+        return cls.query.filter_by(name=name).first()
+
 class Keys(BaseModel):
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     key_type = db.Column(db.Integer)
