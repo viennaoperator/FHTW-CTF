@@ -1,5 +1,5 @@
 from flask import Flask
-import dockerfunctions
+import dockerfunctions, utils
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost:3306/ctfd'
@@ -30,17 +30,21 @@ def challengeReady(name):
 def addChallenge(githuburl):
     pass #TODO
 
+@app.route('/removeChallenge/<string:name>')
+def removeChallenge(name):
+    pass #TODO
+
 @app.route('/listAllChallenges')
 def listAllChallenges():
-    pass #TODO
+    return utils.listAllChallenges()
 
 @app.route('/listAllRunningContainer')
 def listAllRunningContainer():
-    pass #TODO
+    return utils.listAllRunningContainer()
 
 @app.route('/listAllRunningContainerOfChallenge/<int:challengeid>')
 def listAllRunningContainerOfChallenge(challengeid):
-    pass #TODO
+    return utils.listAllRunningContainerOfChallenge(challengeid)
 
 @app.route('/stopAndRemoveAllContainer')
 def stopAndRemoveAllContainer():

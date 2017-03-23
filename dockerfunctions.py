@@ -5,10 +5,11 @@ if os.name == 'posix' and sys.version_info[0] < 3:
 else:
     import subprocess
 
+import config
 #import our db models
 from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
-
-challengeprefix = "challenge" #no special characters
+from modelsDTO import ChallengesDTO, RunningDockerChallengesDTO
+import jsonpickle
 
 def startChallengeWithId(_id):
     challenge = DockerChallenges.findById(_id)
@@ -30,14 +31,13 @@ def startChallengeWithId(_id):
                 noOpenPort = False
         sock.close()
 
-        name = challengeprefix + challenge.name + str(CHALLENGE_PORT)
-        CHALLENGE_URL = "localhost"
+        name = config.challengeprefix + challenge.name + str(CHALLENGE_PORT)
         FLAG          = flagGenerator()
 
         #create environmenet variables file
         f = open(challenge.path + "/.env", "w")
         f.write("CHALLENGE_PORT="+ str(CHALLENGE_PORT)   +"\n")
-        f.write("CHALLENGE_URL=" + CHALLENGE_URL    +"\n")
+        f.write("CHALLENGE_URL=" + config.CHALLENGE_URL    +"\n")
         f.write("FLAG="          + FLAG             +"\n")
         f.close()
 
@@ -48,18 +48,14 @@ def startChallengeWithId(_id):
                                 shell=True, cwd=challenge.path)
         output , error =  proc.communicate() #waits for termination
 
-        #returns container information
         if error is None:
-            proc = subprocess.Popen('docker-compose -p {} ps'.format(name),
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.STDOUT,
-                                    shell=True, cwd=challenge.path)
-            output , error =  proc.communicate()
-
-            runningDockerChallenge = RunningDockerChallenges(challenge.path, name, CHALLENGE_PORT)
+            runningDockerChallenge = RunningDockerChallenges(_id, challenge.path,
+                                                            name, CHALLENGE_PORT)
             runningDockerChallenge.saveToDb()
+            challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
+                                                      challenge.name, CHALLENGE_PORT)
 
-            return output, 200 #http-status : 200 OK
+            return  jsonpickle.encode(challengeDTO), 200
         else:
             return error, 500 #http-status : 500 Internal Server Error
 
@@ -84,13 +80,13 @@ def stopChallengeWithName(name):
 
 def stopAndRemoveAllContainer():
     #stop all container with prefix
-    proc = subprocess.Popen('docker stop $(docker ps --filter name='+challengeprefix+' -a -q)',
+    proc = subprocess.Popen('docker stop $(docker ps --filter name='+config.challengeprefix+' -a -q)',
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, shell=True)
     output , error =  proc.communicate()
 
     #remove all container with prefix
-    proc = subprocess.Popen('docker rm $(docker ps --filter name='+challengeprefix+' -a -q)',
+    proc = subprocess.Popen('docker rm $(docker ps --filter name='+config.challengeprefix+' -a -q)',
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT, shell=True)
     output2 , error2 =  proc.communicate()
@@ -100,9 +96,13 @@ def stopAndRemoveAllContainer():
     proc3.wait()
 
     if error is None and error2 is None:
-        return "Successfully stoppend and removed all container"
+        allRunningContainer = RunningDockerChallenges.getAll()
+        for container in allRunningContainer:
+            container.deleteFromDb()
+
+        return "Successfully stoppend and removed all container", 200
     else:
-        return error + "\n\n" + error2
+        return error + "\n\n" + error2, 500
 
 #generates a random flag for ctf
 def flagGenerator(size=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
