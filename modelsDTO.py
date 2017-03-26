@@ -16,6 +16,16 @@ class ChallengesDTO():
         self.category = category
         self.type = type
 
+class DockerChallengesDTO():
+    _id = None
+    name = None
+    path = None
+
+    def __init__(self,id, name, path):
+        self.id = id
+        self.name = name
+        self.path = path
+
 class RunningDockerChallengesDTO():
     _id = None
     path = None
@@ -27,4 +37,3 @@ class RunningDockerChallengesDTO():
         self.path = path
         self.name = name
         self.port = port
-    

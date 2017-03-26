@@ -13,9 +13,9 @@ class BaseModel(db.Model):
     def getAll(cls):
         return cls.query.all()
 
-    def toJSON(self):
+    '''def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)
+            sort_keys=True, indent=4)'''
 
     #create & update
     def saveToDb(self):
@@ -65,6 +65,10 @@ class DockerChallenges(BaseModel):
         self.name = name
         self.path = path
 
+    @classmethod
+    def findByName(cls, name):
+        return cls.query.filter_by(name=name).first()
+
 class RunningDockerChallenges(BaseModel):
     challengeid = db.Column(db.Integer)
     path = db.Column(db.Text)
@@ -84,5 +88,3 @@ class RunningDockerChallenges(BaseModel):
     @classmethod
     def findByChallengeId(cls, challengeid):
         return cls.query.filter_by(challengeid=challengeid)
-
-#Create Statement muss noch geschrieben werden

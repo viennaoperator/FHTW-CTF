@@ -62,6 +62,12 @@ def startChallengeWithId(_id):
     #if challenge == None
     return "Error: No Challenge found with this id", 404
 
+def stopChallengeContainerWithId(challengeid):
+    challenge = RunningDockerChallenges.findById(challengeid)
+    if challenge:
+        return stopChallengeWithName(challenge.name)
+    return "No Challenge found with this id", 404
+
 def stopChallengeWithName(name):
     challenge = RunningDockerChallenges.findByName(name)
     if challenge:
@@ -70,6 +76,8 @@ def stopChallengeWithName(name):
                                 stderr=subprocess.STDOUT,
                                 shell=True, cwd=challenge.path)
         output , error =  proc.communicate() #waits for termination
+
+        challenge.deleteFromDb()
 
         #return to give information to the consumer
         if error is None:
