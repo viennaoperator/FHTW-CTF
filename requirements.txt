@@ -1,0 +1,5 @@
+Flask==0.10.1
+Flask-SQLAlchemy==2.2
+PyMySQL==0.7.10
+jsonpickle==0.9.4
+subprocess32==3.2.7

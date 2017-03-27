@@ -1,9 +1,13 @@
 # FHTW-CTF
+This project ammends the https://github.com/CTFd/CTFd CTF Framework with Docker Compose Challenges.
+
 ## Requirements
-Python 2.7, MYSQL DB Running at localhost:3306
-''
-pip install flask
-pip install subprocess32
-pip install Flask-SQLAlchemy
-pip install pymysql
-''
+1. Python 2.7 installed
+2. MYSQL Database running at localhost:3306
+
+##Install
+1. `pip install -r requirements.txt`
+2. Update config.py DB Credentials
+
+##Start
+`python app.py`
