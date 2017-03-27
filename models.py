@@ -30,8 +30,8 @@ class Challenges(BaseModel):
     max_attempts = db.Column(db.Integer, default=0)
     value = db.Column(db.Integer)
     category = db.Column(db.String(80))
-    type = db.Column(db.Integer)
-    hidden = db.Column(db.Boolean)
+    type = db.Column(db.Integer, default=0)
+    hidden = db.Column(db.Boolean, default=0)
 
     def __init__(self, name, description, max_attempts, value, category, type=0, hidden=0):
         self.name = name

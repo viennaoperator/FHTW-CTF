@@ -102,7 +102,7 @@ def addChallenge(name,category,description,value,githuburl,hidden,max_attempts):
             max_attempts = 0
         challenge = Challenges(name,description,max_attempts,value,category,_type,hidden)
         challenge.saveToDb()
-        dockerchallenge = DockerChallenges(name,newpath,challenge.id)
+        dockerchallenge = DockerChallenges(None,name,newpath,challenge.id)
         dockerchallenge.saveToDb()
         #return docker challenge infos to client
         challengeDTO = DockerChallengesDTO(dockerchallenge.id, dockerchallenge.name, dockerchallenge.path)

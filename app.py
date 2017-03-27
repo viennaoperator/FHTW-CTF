@@ -12,7 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = Config.SECRET_KEY
 app.register_blueprint(auth)
 
-
 #To external file
 from datetime import timedelta
 from flask import make_response, request, current_app
@@ -65,7 +64,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 @app.before_first_request
 def createTables():
     db.create_all()
-    
+
 #creates docker container with generated flag, returns Challenge Port
 @app.route('/startChallenge/<int:challengeid>')
 @crossdomain(origin='*')
