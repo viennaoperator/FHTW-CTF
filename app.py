@@ -1,15 +1,23 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 import dockerfunctions, utils, config
 import json
 
-app = Flask(__name__)
+from config import Config
+
+from auth import auth
+
+app = Flask(__name__,static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = config.databaseUrl
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = Config.SECRET_KEY
+app.register_blueprint(auth)
+
 
 #To external file
 from datetime import timedelta
 from flask import make_response, request, current_app
 from functools import update_wrapper
+
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,

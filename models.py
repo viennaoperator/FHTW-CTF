@@ -1,4 +1,6 @@
+import datetime
 from db import db
+from passlib.hash import bcrypt_sha256
 
 class BaseModel(db.Model):
     __abstract__ = True
@@ -89,3 +91,21 @@ class RunningDockerChallenges(BaseModel):
     @classmethod
     def findByChallengeId(cls, challengeid):
         return cls.query.filter_by(challengeid=challengeid)
+
+class Teams(BaseModel):
+    name = db.Column(db.String(128), unique=True)
+    email = db.Column(db.String(128), unique=True)
+    password = db.Column(db.String(128))
+    website = db.Column(db.String(128))
+    affiliation = db.Column(db.String(128))
+    country = db.Column(db.String(32))
+    bracket = db.Column(db.String(32))
+    banned = db.Column(db.Boolean, default=False)
+    verified = db.Column(db.Boolean, default=False)
+    admin = db.Column(db.Boolean, default=False)
+    joined = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, name, email, password):
+        self.name = name
+        self.email = email
+        self.password = bcrypt_sha256.encrypt(str(password))

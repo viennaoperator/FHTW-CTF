@@ -1,0 +1,41 @@
+body {
+    padding-top: 70px;
+    /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+
+.admin-menu {
+  float: left;
+  width: 25%;
+  height: 115px;
+  padding: 10px;
+  font-size: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border: 5px solid #fff;
+  outline-color: #fff;
+}
+.admin-menu .glyphicon {
+    width: 100%;
+    top: calc(30% - 20px);
+}
+
+.admin-menu:hover, .admin-menu-hover {
+  color: #fff;
+  background-color: #337ab7;
+}
+
+.result {
+  background-color: #f9f9f9;
+}
+
+.stopContainer {
+    cursor: pointer;
+}
+
+div#alert_template_success, div#alert_template_error{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 400px;
+    text-align: center;
+}
