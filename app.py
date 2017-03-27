@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 import dockerfunctions, utils, config
+import json
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = config.databaseUrl
@@ -80,16 +81,19 @@ def stopChallengeContainer(name):
     return dockerfunctions.stopChallengeWithName(name)
 
 #adds a challenge to the CTF
-@app.route('/addDockerChallenge/<string:name>/<path:githuburl>')
+@app.route('/addChallenge')
 @crossdomain(origin='*')
-def addChallenge(name,githuburl):
-    return utils.addChallenge(name,githuburl)
+def addChallenges():
+    return utils.addChallenge(request.args.get('name'),request.args.get('category'),
+                       request.args.get('desc'),request.args.get('value'),
+                       request.args.get('github'),request.args.get('hidden'),
+                       request.args.get('max_attempts'))
 
 #removes a challenge by id
 @app.route('/removeDockerChallenge/<int:challengeid>')
 @crossdomain(origin='*')
 def removeDockerChallengeById(challengeid):
-    return utils.removeDockerChallenge(challengeid)
+    return utils.removeDockerChallengeById(challengeid)
 #removes a challenge by name
 @app.route('/removeDockerChallenge/<string:name>')
 @crossdomain(origin='*')

@@ -13,10 +13,6 @@ class BaseModel(db.Model):
     def getAll(cls):
         return cls.query.all()
 
-    '''def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__,
-            sort_keys=True, indent=4)'''
-
     #create & update
     def saveToDb(self):
         db.session.add(self)
@@ -35,12 +31,14 @@ class Challenges(BaseModel):
     type = db.Column(db.Integer)
     hidden = db.Column(db.Boolean)
 
-    def __init__(self, name, description, value, category, type=0):
+    def __init__(self, name, description, max_attempts, value, category, type=0, hidden=0):
         self.name = name
         self.description = description
+        self.max_attempts = max_attempts
         self.value = value
         self.category = category
         self.type = type
+        self.hidden = hidden
 
     @classmethod
     def findByName(cls, name):
@@ -60,23 +58,26 @@ class Keys(BaseModel):
 class DockerChallenges(BaseModel):
     name = db.Column(db.String(80))
     path = db.Column(db.Text)
+    chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
 
-    def __init__(self, name, path):
+    def __init__(self, id, name, path, chal):
+        self.id = id
         self.name = name
         self.path = path
+        self.chal = chal
 
     @classmethod
     def findByName(cls, name):
         return cls.query.filter_by(name=name).first()
 
 class RunningDockerChallenges(BaseModel):
-    challengeid = db.Column(db.Integer)
+    #id = db.Column(db.Integer)
     path = db.Column(db.Text)
     name = db.Column(db.String(80))
     port = db.Column(db.Integer)
 
-    def __init__(self, challengeid, path, name, port):
-        self.challengeid = challengeid
+    def __init__(self, path, name, port):
+        #self.challengeid = challengeid
         self.path = path
         self.name = name
         self.port = port

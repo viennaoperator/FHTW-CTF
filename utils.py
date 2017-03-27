@@ -20,12 +20,24 @@ def listAllChallenges():
     return jsonpickle.encode(challengesDTO)
 
 def listAllDockerChallenges():
-    challenges = DockerChallenges.getAll()
+    dockerchallenges = DockerChallenges.getAll()
     challengesDTO = []
-    for challenge in challenges:
-        challengeDTO = DockerChallengesDTO(challenge.id, challenge.name,
-                                           challenge.path)
-        challengesDTO.append(challengeDTO)
+    for dockerchallenge in dockerchallenges:
+        challenge = Challenges.findById(dockerchallenge.chal)
+        if challenge:
+            challengeDTO = ChallengesDTO(challenge.id, challenge.name,
+                                         challenge.description,challenge.max_attempts,
+                                         challenge.value, challenge.category,
+                                         challenge.type, dockerchallenge.id,
+                                         dockerchallenge.path)
+            challengesDTO.append(challengeDTO)
+        else:
+            challengeDTO = ChallengesDTO(id = None, name = dockerchallenge.name,
+                                         description = None, max_attempts = None,
+                                         value = None, category = None, type = None,
+                                         dockerchallengeID=dockerchallenge.id,
+                                         path = dockerchallenge.path)
+            challengesDTO.append(challengeDTO)
     #return object as json
     return jsonpickle.encode(challengesDTO)
 
@@ -51,7 +63,7 @@ def listAllRunningContainerOfChallenge(challengeid):
     #return object as json
     return jsonpickle.encode(challengesDTO)
 
-def addChallenge(name,githuburl):
+def addChallenge(name,category,description,value,githuburl,hidden,max_attempts):
     #input validation
     if name.isalpha() is False:
         return "name must only contain of alphanumeric characters!", 403
@@ -85,10 +97,15 @@ def addChallenge(name,githuburl):
                                 shell=True)
 
         #save information to database
-        challenge = DockerChallenges(name,newpath)
+        _type = None
+        if max_attempts is "":
+            max_attempts = 0
+        challenge = Challenges(name,description,max_attempts,value,category,_type,hidden)
         challenge.saveToDb()
+        dockerchallenge = DockerChallenges(name,newpath,challenge.id)
+        dockerchallenge.saveToDb()
         #return docker challenge infos to client
-        challengeDTO = DockerChallengesDTO(challenge.id, challenge.name, challenge.path)
+        challengeDTO = DockerChallengesDTO(dockerchallenge.id, dockerchallenge.name, dockerchallenge.path)
         return jsonpickle.encode(challengeDTO)
     return error
 
@@ -96,13 +113,18 @@ def removeDockerChallengeByName(name):
     challenge = DockerChallenges.findByName(name)
     cleanRepoOfChallenge(challenge)
     challenge.deleteFromDb()
-    return "Successful removed"
+    return { "result" :  "Successful removed"}
 
 def removeDockerChallengeById(challengeid):
-    challenge = DockerChallenges.findById()
-    cleanRepoOfChallenge(challenge)
-    challenge.deleteFromDb()
-    return "Successful removed"
+    dockerchallenge = DockerChallenges.findById(challengeid)
+    cleanRepoOfChallenge(dockerchallenge)
+    challenge = Challenges.findById(dockerchallenge.chal)
+    if dockerchallenge:
+        dockerchallenge.deleteFromDb()
+    if challenge:
+        challenge.deleteFromDb()
+    #return json
+    return { "result" :  "Successful removed"}
 
 def cleanRepoOfChallenge(DockerChallenges):
     proc = subprocess.Popen('rm -r {}'.format(DockerChallenges.path),

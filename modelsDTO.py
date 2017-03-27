@@ -7,14 +7,19 @@ class ChallengesDTO():
     max_attempts = None
     value = None
     category = None
+    dockerchallengeID = None
+    path = None
 
-    def __init__(self, id, name, description, value, category, type):
+    def __init__(self, id, name, description, max_attempts, value, category, type, dockerchallengeID, path):
         self.id = id
         self.name = name
         self.description = description
+        self.max_attempts = max_attempts
         self.value = value
         self.category = category
         self.type = type
+        self.dockerchallengeID = dockerchallengeID
+        self.path = path
 
 class DockerChallengesDTO():
     _id = None

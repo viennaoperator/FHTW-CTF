@@ -49,10 +49,10 @@ def startChallengeWithId(_id):
         output , error =  proc.communicate() #waits for termination
 
         if error is None:
-            runningDockerChallenge = RunningDockerChallenges(_id, challenge.path,
+            runningDockerChallenge = RunningDockerChallenges(challenge.path,
                                                             name, CHALLENGE_PORT)
             runningDockerChallenge.saveToDb()
-            challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
+            challengeDTO = RunningDockerChallengesDTO(runningDockerChallenge.id, challenge.path,
                                                       challenge.name, CHALLENGE_PORT)
 
             return  jsonpickle.encode(challengeDTO), 200
@@ -103,12 +103,15 @@ def stopAndRemoveAllContainer():
     proc3 = subprocess.Popen('docker network prune -f', shell=True)
     proc3.wait()
 
+    allRunningContainer = RunningDockerChallenges.getAll()
+    if allRunningContainer is None:
+        return "Successfully stopped and removed all container", 200
+
     if error is None and error2 is None:
-        allRunningContainer = RunningDockerChallenges.getAll()
         for container in allRunningContainer:
             container.deleteFromDb()
 
-        return "Successfully stoppend and removed all container", 200
+        return "Successfully stopped and removed all container", 200
     else:
         return error + "\n\n" + error2, 500
 
