@@ -5,7 +5,6 @@ body {
 
 .admin-menu {
   float: left;
-  width: 25%;
   height: 115px;
   padding: 10px;
   font-size: 20px;
@@ -32,10 +31,54 @@ body {
     cursor: pointer;
 }
 
-div#alert_template_success, div#alert_template_error{
+a {
+    color: black !important;
+    text-decoration: none !important;
+}
+
+a:hover {
+    color: white!important;
+}
+
+.alert {
     position: absolute;
     top: 0px;
     right: 0px;
     width: 400px;
     text-align: center;
+}
+
+.alert-info {
+  z-index: 1;
+}
+
+.alert-success {
+  z-index: 2;
+}
+
+.alert-danger {
+  z-index: 3;
+}
+
+#login-container .col-md-12 {
+    text-align: center;
+}
+
+#login-container .col-md-12 * {
+    text-align: center;
+}
+
+#login-container {
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  background-color: #F7F7F7;
+  border-radius: 2px;
+  padding: 40px;
+}
+
+div#login-container div {
+    margin: 5px 0px;
+}
+
+.login-logo, #login-container .alert  {
+  width:100%;
 }

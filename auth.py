@@ -9,7 +9,7 @@ import hashlib, os
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login', methods=['POST', 'GET'])
+@auth.route('/', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         errors = []
@@ -20,19 +20,17 @@ def login():
                 try:
                     session.regenerate() # NO SESSION FIXATION FOR YOU
                 except:
-                    pass # TODO: Some session objects don't implement regenerate :(
+                    pass
+                    #return render_template('login.html', errors=errors)
                 session['username'] = team.name
                 session['id'] = team.id
                 session['admin'] = team.admin
                 session['nonce'] = sha512(os.urandom(10))
                 db.session.close()
 
-                print "User logged in"
-                return render_template('admin.html')
-
-                #TODO: Check, if admin -- to admin page
-
-                #if user -- to user page
+                if team.admin:
+                    return render_template('admin.html')
+                return render_template('login.html')
 
             else: # This user exists but the password is wrong
                 errors.append("Your username or password is incorrect")
@@ -43,8 +41,7 @@ def login():
             db.session.close()
             return render_template('login.html', errors=errors)
     else:
-        db.session.close()
-        return render_template('login.html')
+        return landingPage()
 
 @auth.route('/logout')
 def logout():
@@ -52,8 +49,20 @@ def logout():
         session.clear()
     return render_template('login.html')
 
+def landingPage():
+    if is_admin():
+         return render_template('admin.html')
+    db.session.close()
+    return render_template('login.html')
+
 def authed():
     return bool(session.get('id', False))
+
+def is_admin():
+    if authed():
+        return session['admin']
+    else:
+        return False
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()

@@ -65,11 +65,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 @app.before_first_request
 def createTables():
     db.create_all()
-
-@app.route('/')
-def hello():
-    return "FHTW-CTF is up & running!"
-
+    
 #creates docker container with generated flag, returns Challenge Port
 @app.route('/startChallenge/<int:challengeid>')
 @crossdomain(origin='*')

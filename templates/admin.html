@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Bare - Start Bootstrap Template</title>
+    <title>Admin Menu</title>
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="{{ request.script_root }}/static/css/lib/bootstrap.min.css">
@@ -27,24 +27,27 @@
                 <h1>Admin Console FHTW-CTF</h1>
                 <p class="lead">ammends CTFd framework with docker compose challenges</p>
             </div>
+             <button class="col-sm-2 col-sm-offset-1 text-center admin-menu" data-toggle="modal" data-target="#myModal">
+               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              add challenge
+             </button>
 
-           <button class="col-lg-3 text-center admin-menu" data-toggle="modal" data-target="#myModal">
-             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-            add challenge
-           </button>
-
-            <button id="listAllDockerChallenges" class="col-lg-3 text-center admin-menu">
-              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                show all challenges
-            </button>
-            <button id="listAllRunningContainer" class="col-lg-3 text-center admin-menu">
-              <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-              show all running container
-            </button>
-            <button id="stopAndRemoveAllContainer" class="col-lg-3 text-center admin-menu">
-              <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-              stop & remove all running container
-            </button>
+              <button id="listAllDockerChallenges" class="col-sm-2 text-center admin-menu">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                  show all challenges
+              </button>
+              <button id="listAllRunningContainer" class="col-sm-2 text-center admin-menu">
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                show all running container
+              </button>
+              <button id="stopAndRemoveAllContainer" class="col-sm-2 text-center admin-menu">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                stop & remove all running container
+              </button>
+              <a href="/logout"<button id="logout" class="col-sm-2 text-center admin-menu">
+                <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                logout
+              </button></a>
 
             <!-- for deleting X   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <br /> -->
 
@@ -111,13 +114,13 @@
     </div>
 
     <!--Success Message -->
-    <div class="alert alert-success" id="alert_template_success" style="display: none;">
-    </div>
+    <div class="alert alert-success" id="alert_template_success" style="display: none;"></div>
 
     <!--Error Message -->
-    <div class="alert alert-danger" id="alert_template_error" style="display: none;">
-    </div>
+    <div class="alert alert-danger" id="alert_template_error" style="display: none;"></div>
 
+    <!--info Message -->
+    <div class="alert alert-info" id="alert_template_info" style="display: none;"></div>
 
     <!-- jQuery Version 1.11.1 -->
     <script src="{{ request.script_root }}/static/js/lib/jquery.js"></script>

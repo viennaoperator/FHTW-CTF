@@ -11,7 +11,7 @@ $(".admin-menu").click(function(){
 function successMessage(message){
   $("#alert_template_success").html(message);
   $('#alert_template_success').fadeIn('slow');
-  $('#alert_template_success').delay(4000).fadeOut(400);
+  $('#alert_template_success').delay(5000).fadeOut(400);
 }
 
 function errorMessage(message){
@@ -19,12 +19,20 @@ function errorMessage(message){
   $('#alert_template_error').fadeIn('slow');
   $('#alert_template_error').delay(8000).fadeOut(400);
 }
+
+function infoMessage(message){
+  $("#alert_template_info").html(message);
+  $('#alert_template_info').fadeIn('slow');
+  $('#alert_template_info').delay(3000).fadeOut(400);
+}
+
 //Design Functions END
 
 //ADD Functionality
 $(function(){
     $('#challenge-form').on('submit', function(e){
         e.preventDefault();
+        infoMessage("Trying to add your challenge...");
         $.ajax({
             url: 'http://localhost:5000/addChallenge', //this is the submit URL
             type: 'GET', //or POST
@@ -113,6 +121,7 @@ function operateFormatter(value, row, index) {
     };
 
 function startChallenge(id){
+  infoMessage("Trying to start challenge " + id);
   $.ajax({
     url: "http://localhost:5000/startChallenge/" + id,
     dataType: 'json',
@@ -123,6 +132,7 @@ function startChallenge(id){
 }
 
 function removeChallenge(id){
+  infoMessage("Trying to remove challenge " + id)
   $.ajax({
     url: "http://localhost:5000/removeDockerChallenge/" + id,
     dataType: 'json',
@@ -175,14 +185,15 @@ $("#listAllRunningContainer").click(function(){
 
 //stop selected containers
 $("#stop").click(function () {
+  infoMessage("Trying to stop selected challenges...");
   var ids = getIdSelections();
   console.log(ids);
   for (var id in ids){
     $.ajax({
       url: "http://localhost:5000/stopChallengeContainer/" + ids[id],
       success: function(result){
-        successMessage("Challenge with id: " + id + "stopped");
-        console.log("Challenge with id: " + id + "stopped");
+        successMessage("Challenge stopped");
+        console.log("Challenge stopped");
       }
       });
   }
@@ -202,16 +213,23 @@ function getIdSelections() {
 }
 
 $("#stopAndRemoveAllContainer").click(function (){
-    $.ajax({
-      url: "http://localhost:5000/stopAndRemoveAllContainer",
-      success: function(result){
-        successMessage("All Container stopped & removed!");
-      },
-      error: function (xhr, ajaxOptions, thrownError){
-        console.log(xhr);
-        console.log(ajaxOptions);
-        console.log(thrownError);
-        errorMessage("container couldn't be stopped & removed");
-      }
-    });
+  bootbox.confirm("Do you really want to stop and remove all challenges?",
+  function(result){ /* your callback code */
+    if(result) {
+      infoMessage("Trying to stop and remove all challenges ");
+      $.ajax({
+        url: "http://localhost:5000/stopAndRemoveAllContainer",
+        success: function(result){
+          successMessage("All Container stopped & removed!");
+        },
+        error: function (xhr, ajaxOptions, thrownError){
+          console.log(xhr);
+          console.log(ajaxOptions);
+          console.log(thrownError);
+          errorMessage("container couldn't be stopped & removed");
+        }
+      });
+    }
+  });
+
 });

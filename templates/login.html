@@ -1,10 +1,23 @@
 <html>
 <head>
+      <!-- Bootstrap Core CSS -->
+      <link rel="stylesheet" href="{{ request.script_root }}/static/css/lib/bootstrap.min.css">
+      <link rel="stylesheet" href="{{ request.script_root }}/static/css/lib/bootstrap-table.min.css">
+
+      <!-- Custom Files -->
+      <link href="{{ request.script_root }}/static/css/my.css" rel="stylesheet">
+
+      <!-- jQuery Version 1.11.1 -->
+      <script src="{{ request.script_root }}/static/js/lib/jquery.js"></script>
+      <!-- Bootstrap Core JavaScript -->
+      <script src="{{ request.script_root }}/static/js/lib/bootstrap.min.js"></script>
+      <!-- my JS -->
+      <script src="{{ request.script_root }}/static/js/login.js"/></script>
 </head>
 <body>
   <div class="container main-container">
       <div class="row">
-          <div id="login-container" class="col-md-6 col-md-offset-3">
+          <div id="login-container" class="col-md-4 col-md-offset-4">
               {% for error in errors %}
                   <div class="alert alert-danger alert-dismissable" role="alert">
                     <span class="sr-only">Error:</span>
@@ -12,30 +25,24 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
                   </div>
               {% endfor %}
-              <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+              <span class="col-md-12"><img class="login-logo" src="{{ request.script_root }}/static/img/logo.png" alt="logo"/>
+              </span>
+              <form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal" action="/">
                   <div class="row">
                       <div class="col-md-12">
-                          <span class="input">
-                              <input class="input-field" type="text" name="name" id="name-input" />
-                              <label class="input-label" for="name-input">
-                                  <span class="label-content">Team Name</span>
-                              </label>
-                          </span>
+                              <input class="input-field col-md-12" type="text" name="name" id="name-input" placeholder="Username"/>
                       </div>
                   </div>
                   <div class="row">
                       <div class="col-md-12">
                           <span class="input">
-                              <input class="input-field" type="password" name="password" id="password-input" />
-                              <label class="input-label" for="password-input">
-                                  <span class="label-content" data-content="Password">Password</span>
-                              </label>
+                            <input class="input-field col-md-12" type="password" name="password" id="password-input" placeholder="Password" />
                           </span>
                       </div>
                   </div>
                   <div class="done-row row">
-                      <div class="col-md-6">
-                          <button type="submit" id="submit" tabindex="5" class="btn btn-md btn-theme btn-outlined pull-right">Submit</button>
+                      <div class="col-md-12">
+                          <button type="submit" id="submit" tabindex="5" class="btn btn-primary">Login</button>
                       </div>
                   </div>
                   <input type="hidden" name="nonce" value="{{ nonce }}">
@@ -43,5 +50,9 @@
           </div>
       </div>
   </div>
+  <!-- END of Container -->
+
+
+
 </body>
 </html>
