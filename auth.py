@@ -5,7 +5,7 @@ from passlib.hash import bcrypt_sha256
 
 from config import Config
 
-import hashlib, os
+import hashlib, os, functools
 
 auth = Blueprint('auth', __name__)
 
@@ -68,3 +68,22 @@ def is_admin():
 
 def sha512(string):
     return hashlib.sha512(string).hexdigest()
+
+def admins_only(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        if isAdmin():
+            return f(*args, **kwargs)
+        else:
+            return "this function is only available for admin users", 401
+    return decorated_function
+
+def users_only(f):
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        if authed():
+            return f(*args, **kwargs)
+        else:
+            return "this function is only available for users", 401
+
+    return decorated_function

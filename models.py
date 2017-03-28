@@ -73,13 +73,12 @@ class DockerChallenges(BaseModel):
         return cls.query.filter_by(name=name).first()
 
 class RunningDockerChallenges(BaseModel):
-    #id = db.Column(db.Integer)
     path = db.Column(db.Text)
     name = db.Column(db.String(80))
     port = db.Column(db.Integer)
+    teamId = db.Column(db.Integer, db.ForeignKey('teams.id'))
 
     def __init__(self, path, name, port):
-        #self.challengeid = challengeid
         self.path = path
         self.name = name
         self.port = port
