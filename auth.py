@@ -30,7 +30,7 @@ def login():
 
                 if team.admin:
                     return render_template('admin.html')
-                return render_template('login.html')
+                return render_template('user.html')
 
             else: # This user exists but the password is wrong
                 errors.append("Your username or password is incorrect")
@@ -50,8 +50,10 @@ def logout():
     return render_template('login.html')
 
 def landingPage():
-    if is_admin():
-         return render_template('admin.html')
+    if authed():
+        if is_admin():
+            return render_template('admin.html')
+        return render_template('user.html')
     db.session.close()
     return render_template('login.html')
 

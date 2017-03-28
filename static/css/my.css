@@ -3,7 +3,7 @@ body {
     /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
 
-.admin-menu {
+.admin-menu, .challenge {
   float: left;
   height: 115px;
   padding: 10px;
@@ -81,4 +81,65 @@ div#login-container div {
 
 .login-logo, #login-container .alert  {
   width:100%;
+}
+
+.challenge.started:hover {
+  background-color: #2ECC71;
+}
+
+.challenge.stopped:hover {
+  background-color: #F5B7B1;
+}
+
+.challenge.starting:hover {
+  background-color: #F9E79F;
+}
+
+.challenge {
+    color: black;
+    height: auto;
+    font-size: 12px;
+}
+
+.fa-spin-custom, .glyphicon-spin {
+    -webkit-animation: spin 1000ms infinite linear;
+    animation: spin 1000ms infinite linear;
+}
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+@keyframes spin {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+.btn-outlined {
+    background: none;
+    border-color: #545454;
+    background-image: none;
+    border: 3px solid;
+}
+
+.btn-outlined:hover,
+.btn-outlined:active {
+    color: #FFF;
+    background: #545454;
+    border-color: #545454;
+}
+
+a#logout {
+    padding-top: 29px;
 }
