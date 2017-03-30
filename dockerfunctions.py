@@ -51,12 +51,15 @@ def startChallengeWithId(_id,teamid):
         output , error =  proc.communicate() #waits for termination
 
         if error is None:
+            key = Keys(_id,FLAG,0)
+            key.saveToDb()
             runningDockerChallenge = RunningDockerChallenges(challenge.path,
                                                             name, CHALLENGE_PORT,
-                                                            teamid, _id)
+                                                            teamid, _id, key.id)
             runningDockerChallenge.saveToDb()
             challengeDTO = RunningDockerChallengesDTO(runningDockerChallenge.id, challenge.path,
-                                                      challenge.name, CHALLENGE_PORT,teamid)
+                                                      challenge.name, CHALLENGE_PORT,teamid,
+                                                      challenge.id, None)
 
             return  jsonpickle.encode(challengeDTO), 200
         else:
@@ -73,6 +76,13 @@ def stopChallengeContainerWithId(runningchallengeid):
         return stopChallengeWithName(challenge.name)
     return "No Challenge found with this id", 404
 
+def stopChallengeWithid(challengeid, teamid):
+    runningchallenge = RunningDockerChallenges.findByTeamAndChallengeId(challengeid, teamid)
+    if runningchallenge:
+        return stopChallengeWithName(runningchallenge.name)
+    return "No Challenge found with this id", 404
+
+
 def stopChallengeWithName(name):
     challenge = RunningDockerChallenges.findByName(name)
     if challenge:
@@ -83,6 +93,8 @@ def stopChallengeWithName(name):
         output , error =  proc.communicate() #waits for termination
 
         challenge.deleteFromDb()
+        keys = Keys.findById(challenge.key)
+        keys.deleteFromDb()
 
         #return to give information to the consumer
         if error is None:

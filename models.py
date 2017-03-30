@@ -46,17 +46,6 @@ class Challenges(BaseModel):
     def findByName(cls, name):
         return cls.query.filter_by(name=name).first()
 
-class Keys(BaseModel):
-    chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
-    key_type = db.Column(db.Integer)
-    flag = db.Column(db.Text)
-    data = db.Column(db.Text)
-
-    def __init__(self, chal, flag, key_type):
-        self.chal = chal
-        self.flag = flag
-        self.key_type = key_type
-
 class DockerChallenges(BaseModel):
     name = db.Column(db.String(80))
     path = db.Column(db.Text)
@@ -82,13 +71,15 @@ class RunningDockerChallenges(BaseModel):
     port = db.Column(db.Integer)
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    key = db.Column(db.Integer, db.ForeignKey('keys.id')) #flag
 
-    def __init__(self, path, name, port, teamid, chal):
+    def __init__(self, path, name, port, teamid, chal, key):
         self.path = path
         self.name = name
         self.port = port
         self.teamid = teamid
         self.chal = chal
+        self.key = key
 
     @classmethod
     def findByName(cls, name):
@@ -106,6 +97,7 @@ class RunningDockerChallenges(BaseModel):
     def findByTeamAndChallengeId(cls, chalid, teamid):
         return cls.query.filter_by(chal=chalid, teamid=teamid).first()
 
+#copied from ctfd
 class Teams(BaseModel):
     name = db.Column(db.String(128), unique=True)
     email = db.Column(db.String(128), unique=True)
@@ -123,3 +115,15 @@ class Teams(BaseModel):
         self.name = name
         self.email = email
         self.password = bcrypt_sha256.encrypt(str(password))
+
+#copied from ctfd
+class Keys(BaseModel):
+    chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    key_type = db.Column(db.Integer)
+    flag = db.Column(db.Text)
+    data = db.Column(db.Text)
+
+    def __init__(self, chal, flag, key_type):
+        self.chal = chal
+        self.flag = flag
+        self.key_type = key_type

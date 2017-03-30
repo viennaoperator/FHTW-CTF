@@ -27,13 +27,13 @@ def startChallengeWithId(challengeid):
 @app.route('/stopChallengeContainer/<int:runningchallengeid>')
 @users_only
 def stopChallengeContainerWithId(runningchallengeid):
-    #TODO: check, if user id matches container id
     return dockerfunctions.stopChallengeContainerWithId(runningchallengeid)
 
 @app.route('/stopChallenge/<int:challengeid>')
 @users_only
 def stopChallengeWithid(challengeid):
-    pass #TODO
+    teamid = session.get('id')
+    return dockerfunctions.stopChallengeWithid(challengeid, teamid)
 
 #adds a challenge to the CTF
 @app.route('/addChallenge')

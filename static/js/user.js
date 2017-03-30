@@ -41,7 +41,6 @@ function loadStartedChallenges(){
       type: 'GET',
       dataType: 'json',
       success: function(data){
-        console.log(startedChallenges);
         startedChallenges = data;
         //after successfully loaded the challenges --> display them
         displayChallenges();
@@ -75,11 +74,29 @@ function displayChallenges(){
 
   //checks availability of every started challenge
   checkAvailablity();
-
   //when everything is finished we add jquery functions
   $('.challenge').matchHeight();
+}
+
+function giveButtonsFunction(){
   $( ".btn-outlined" ).click(function(){
-    console.log($(this).parent().parent());
+    var challenge = $(this).parent().parent();
+    var challengeClass = challenge.attr("class");
+    var challengeId = challenge.attr("id");
+
+    console.log(challengeClass);
+    if (challengeClass.includes("stopped")){
+      startChallenge(challengeId);
+    }
+    else if (challengeClass.includes("starting")){
+      stopChallenge(challengeId);
+    }
+    else if (challengeClass.includes("started")){
+      stopChallenge(challengeId);
+    }
+    else {
+      console.log("No proper class found!");
+    }
   });
 }
 
@@ -90,11 +107,10 @@ function displayChallenge(challenge){
              "<p><button class='btn-outlined'>Start</button></p>" +
              "</div>";
   $("#challengesRow").append(html);
+  giveButtonsFunction();
 }
 
 function markChallengeAsStarted(challenge){
-  console.log("markChallengeAsStarted");
-  console.log(challenge);
   $("#" + challenge.chal).html("");
   var html = "<p><h3>" + challenge.name + "</h3></p>" +
              "<p>" + challenge.description + "</p>" +
@@ -103,6 +119,7 @@ function markChallengeAsStarted(challenge){
   $("#" + challenge.chal).removeClass("stopped");
   $("#" + challenge.chal).addClass("starting");
   $("#" + challenge.chal).html(html);
+  giveButtonsFunction();
 }
 
 function markChallengesAsAvailable(challenge){
@@ -116,6 +133,7 @@ function markChallengesAsAvailable(challenge){
     $("#" + challenge.chal).removeClass("stopped");
     $("#" + challenge.chal).addClass("started");
     $("#" + challenge.chal).html(html);
+    giveButtonsFunction();
 }
 
 function startChallenge(id){
@@ -126,6 +144,22 @@ function startChallenge(id){
       dataType: 'json',
       success: function(data){
         successMessage("Successful started...");
+      },
+      error: function (xhr, ajaxOptions, thrownError){
+        errorMessage(thrownError);
+      }
+  });
+}
+
+function stopChallenge(id){
+  infoMessage("Stopping challenge...")
+  $.ajax({
+      url: 'http://localhost:5000/stopChallenge/' + id, //this is the submit URL
+      type: 'GET',
+      dataType: 'json',
+      success: function(data){
+        successMessage("Successful stopped...");
+        displayChallenges();
       },
       error: function (xhr, ajaxOptions, thrownError){
         errorMessage(thrownError);
@@ -156,3 +190,8 @@ $(function() {
     refreshChallenges();
   });
 });
+
+//Constantly check, if there's an update
+setInterval(function() {
+  checkAvailablity();
+}, 15000);
