@@ -35,13 +35,6 @@ def stopChallengeContainerWithId(runningchallengeid):
 def stopChallengeWithid(challengeid):
     pass #TODO
 
-#Stops a specific container and the linked containers
-#@app.route('/stopChallengeContainer/<string:name>')
-#@users_only
-#def stopChallengeContainer(name):
-    #TODO: check, if user id matches container user id
-#    return dockerfunctions.stopChallengeWithName(name)
-
 #adds a challenge to the CTF
 @app.route('/addChallenge')
 @admins_only
@@ -86,6 +79,7 @@ def listMyRunningChallenges():
 def listAllRunningContainer():
     return utils.listAllRunningContainer()
 
+#not needed?
 @app.route('/listAllRunningContainerOfChallenge/<int:challengeid>')
 @admins_only
 def listAllRunningContainerOfChallenge(challengeid):
@@ -95,6 +89,13 @@ def listAllRunningContainerOfChallenge(challengeid):
 @admins_only
 def stopAndRemoveAllContainer():
     return dockerfunctions.stopAndRemoveAllContainer()
+
+#checks availability of challenge
+@app.route('/checkAvailable/<int:challengeid>')
+@users_only
+def checkAvailable(challengeid):
+    teamid = session.get('id')
+    return utils.checkAvailableHttp(challengeid,teamid)
 
 if __name__ == '__main__':
     from db import db

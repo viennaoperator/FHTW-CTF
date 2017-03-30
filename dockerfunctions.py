@@ -53,7 +53,7 @@ def startChallengeWithId(_id,teamid):
         if error is None:
             runningDockerChallenge = RunningDockerChallenges(challenge.path,
                                                             name, CHALLENGE_PORT,
-                                                            teamid)
+                                                            teamid, _id)
             runningDockerChallenge.saveToDb()
             challengeDTO = RunningDockerChallengesDTO(runningDockerChallenge.id, challenge.path,
                                                       challenge.name, CHALLENGE_PORT,teamid)

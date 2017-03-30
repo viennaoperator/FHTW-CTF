@@ -7,6 +7,8 @@ if os.name == 'posix' and sys.version_info[0] < 3:
 else:
     import subprocess
 
+import urllib
+
 def listAllChallenges():
     challenges = Challenges.getAll()
     #transfer object to data transfer object
@@ -148,7 +150,25 @@ def listMyRunningChallenges(teamid):
     runningChallenges = RunningDockerChallenges.findByTeamId(teamid)
     runningChallegesDTO = []
     for challenge in runningChallenges:
+        chal = Challenges.findById(challenge.chal)
         challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
-                                                  challenge.name, challenge.port)
-        challengesDTO.append(challengeDTO)
+                                                  challenge.name, challenge.port,
+                                                  challenge.teamid,chal.id,
+                                                  chal.description)
+        runningChallegesDTO.append(challengeDTO)
     return jsonpickle.encode(runningChallegesDTO)
+
+#return http status code of challenge
+def checkAvailableHttp(challengeid, teamid):
+    runningChallenge = RunningDockerChallenges.findByTeamAndChallengeId(challengeid,teamid)
+    if runningChallenge:
+        statuscode = urllib.urlopen("http://localhost:" + str(runningChallenge.port)).getcode()
+        if statuscode is 200:
+            chal = Challenges.findById(runningChallenge.chal)
+            challengeDTO = RunningDockerChallengesDTO(runningChallenge.id, runningChallenge.path,
+                                                      runningChallenge.name, runningChallenge.port,
+                                                      runningChallenge.teamid,chal.id,
+                                                      chal.description)
+            return jsonpickle.encode(challengeDTO)
+        return "Not available yet", 500
+    return "No challenge with this id found", 404

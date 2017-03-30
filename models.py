@@ -83,11 +83,12 @@ class RunningDockerChallenges(BaseModel):
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
 
-    def __init__(self, path, name, port, teamid):
+    def __init__(self, path, name, port, teamid, chal):
         self.path = path
         self.name = name
         self.port = port
         self.teamid = teamid
+        self.chal = chal
 
     @classmethod
     def findByName(cls, name):
@@ -100,6 +101,10 @@ class RunningDockerChallenges(BaseModel):
     @classmethod
     def findByTeamId(cls, teamid):
         return cls.query.filter_by(teamid=teamid)
+
+    @classmethod
+    def findByTeamAndChallengeId(cls, chalid, teamid):
+        return cls.query.filter_by(chal=chalid, teamid=teamid).first()
 
 class Teams(BaseModel):
     name = db.Column(db.String(128), unique=True)

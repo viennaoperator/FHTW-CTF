@@ -28,12 +28,8 @@ function refreshChallenges(){
         successMessage("Sucessfully loaded challenges");
         availableChallenges = data;
         loadStartedChallenges();
-        displayAvailableChallenges();
       },
       error: function (xhr, ajaxOptions, thrownError){
-        console.log(xhr);
-        console.log(ajaxOptions);
-        console.log(thrownError);
         errorMessage(thrownError);
       }
   });
@@ -45,32 +41,81 @@ function loadStartedChallenges(){
       type: 'GET',
       dataType: 'json',
       success: function(data){
-        startedChallenges = data;
         console.log(startedChallenges);
+        startedChallenges = data;
+        //after successfully loaded the challenges --> display them
+        displayChallenges();
       },
       error: function (xhr, ajaxOptions, thrownError){
-        console.log(xhr);
-        console.log(ajaxOptions);
-        console.log(thrownError);
         errorMessage(thrownError);
       }
   });
 }
 
-function displayAvailableChallenges(){
+//check if the challenge is available for pentesting
+function checkAvailablity(){
+  $( ".starting" ).each(function() {
+    //extract id from div
+    checkAvailabe($(this).attr('id'));
+  });
+}
+
+function displayChallenges(){
   $("#challengesRow").html("");
+
+  //display all available challenges
   for (var i = 0, len = availableChallenges.length; i < len; i++) {
-    var html = "<div id='"+availableChallenges[i].challengeid+"'class='col-sm-4 text-center challenge stopped'>" +
-               "<p><h3>" + availableChallenges[i].name + "</h3></p>" +
-               "<p>" + availableChallenges[i].description + "</p>" +
-               "<p><button class='btn-outlined'>Start</button></p>" +
-               "</div>";
-    $("#challengesRow").append(html);
+      displayChallenge(availableChallenges[i]);
   }
 
+  //look for already started challenges and mark them as started within the GUI
+  for (var i = 0, len = startedChallenges.length; i < len; i++) {
+    markChallengeAsStarted(startedChallenges[i]);
+  }
+
+  //checks availability of every started challenge
+  checkAvailablity();
+
+  //when everything is finished we add jquery functions
+  $('.challenge').matchHeight();
   $( ".btn-outlined" ).click(function(){
     console.log($(this).parent().parent());
   });
+}
+
+function displayChallenge(challenge){
+  var html = "<div id='"+challenge.challengeid+"'class='col-sm-4 text-center challenge stopped'>" +
+             "<p><h3>" + challenge.name + "</h3></p>" +
+             "<p>" + challenge.description + "</p>" +
+             "<p><button class='btn-outlined'>Start</button></p>" +
+             "</div>";
+  $("#challengesRow").append(html);
+}
+
+function markChallengeAsStarted(challenge){
+  console.log("markChallengeAsStarted");
+  console.log(challenge);
+  $("#" + challenge.chal).html("");
+  var html = "<p><h3>" + challenge.name + "</h3></p>" +
+             "<p>" + challenge.description + "</p>" +
+             "<p><span class='glyphicon glyphicon-refresh glyphicon-spin'></span> Waiting for startup</p>" +
+             "<p><button class='btn-outlined'>Terminate</button></p>";
+  $("#" + challenge.chal).removeClass("stopped");
+  $("#" + challenge.chal).addClass("starting");
+  $("#" + challenge.chal).html(html);
+}
+
+function markChallengesAsAvailable(challenge){
+    $("#" + challenge.chal).html("");
+    var html = "<p><h3>" + challenge.name + "</h3></p>" +
+               "<p>" + challenge.description + "</p>" +
+               "<a href='http://localhost:" + challenge.port + "' " +
+               "target='_blank'> GO TO CHALLENGE</a></p>" +
+               "<p><button class='btn-outlined'>Stop</button></p>";
+    $("#" + challenge.chal).removeClass("starting");
+    $("#" + challenge.chal).removeClass("stopped");
+    $("#" + challenge.chal).addClass("started");
+    $("#" + challenge.chal).html(html);
 }
 
 function startChallenge(id){
@@ -80,23 +125,34 @@ function startChallenge(id){
       type: 'GET',
       dataType: 'json',
       success: function(data){
-        infoMessage("Successful started...");
+        successMessage("Successful started...");
       },
       error: function (xhr, ajaxOptions, thrownError){
-        console.log(xhr);
-        console.log(ajaxOptions);
-        console.log(thrownError);
         errorMessage(thrownError);
       }
   });
 }
 
+//service, checks availability of container and then marks them as available in GUI
+function checkAvailabe(runningchallengeid){
+  $.ajax({
+      url: 'http://localhost:5000/checkAvailable/' + runningchallengeid, //this is the submit URL
+      type: 'GET',
+      dataType: 'json',
+      success: function(data){
+        markChallengesAsAvailable(data);
+      },
+      error: function (xhr, ajaxOptions, thrownError){
+        errorMessage(thrownError);
+      }
+  });
+}
+
+//on body load
 $(function() {
   refreshChallenges();
-  $('.challenge').matchHeight();
 
   $("#refresh").click(function(){
     refreshChallenges();
-    $('.challenge').matchHeight();
   });
 });

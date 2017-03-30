@@ -37,13 +37,17 @@ class RunningDockerChallengesDTO():
     name = None
     port = None
     teamid = None
+    chal = None
+    description = None
 
-    def __init__(self, id, path, name, port, teamid):
+    def __init__(self, id, path, name, port, teamid, chal, description):
         self.id = id
         self.path = path
         self.name = name
         self.port = port
         self.teamid = teamid
+        self.chal = chal
+        self.description = description
 
 class AvailableChallengesDTO():
     challengeid = None

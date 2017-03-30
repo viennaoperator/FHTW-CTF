@@ -13,6 +13,8 @@
       <script src="{{ request.script_root }}/static/js/lib/bootstrap.min.js"></script>
       <!-- Matching Heights -->
       <script src="{{ request.script_root }}/static/js/lib/jquery.matchHeight.js"></script>
+      <!-- Ping Webserver via Javascript -->
+      <script src="{{ request.script_root }}/static/js/lib/ping.js"/></script>
       <!-- my JS -->
       <script src="{{ request.script_root }}/static/js/user.js"/></script>
 </head>
@@ -37,7 +39,7 @@
           submit flag
         </button>
       </div>
-      <div class="row">
+    <!--  <div class="row">
         <div class="col-sm-4 text-center challenge stopped">
           <p><h3>ChallengeName</h3></p>
           <p>Description</p>
@@ -56,7 +58,7 @@
           <p><a href="#">Go to Challenge</a></p>
           <p><button class="btn-outlined">Stop</button></p>
         </div>
-      </div>
+      </div>-->
       <div id="challengesRow" class="row">
         <span class="glyphicon glyphicon-refresh glyphicon-spin"></span> Loading data...
       </div>
