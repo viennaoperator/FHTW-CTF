@@ -72,7 +72,7 @@ def sha512(string):
 def admins_only(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
-        if isAdmin():
+        if is_admin():
             return f(*args, **kwargs)
         else:
             return "this function is only available for admin users", 401

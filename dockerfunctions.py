@@ -9,10 +9,12 @@ import config
 #import our db models
 from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
 from modelsDTO import ChallengesDTO, RunningDockerChallengesDTO
+from flask import session
 import jsonpickle
 
-def startChallengeWithId(_id):
-    challenge = DockerChallenges.findById(_id)
+def startChallengeWithId(_id,teamid):
+    challenge = DockerChallenges.findByChal(_id)
+    print challenge
     if challenge:
         print "Challenge found, starting..."
 
@@ -50,10 +52,11 @@ def startChallengeWithId(_id):
 
         if error is None:
             runningDockerChallenge = RunningDockerChallenges(challenge.path,
-                                                            name, CHALLENGE_PORT)
+                                                            name, CHALLENGE_PORT,
+                                                            teamid)
             runningDockerChallenge.saveToDb()
             challengeDTO = RunningDockerChallengesDTO(runningDockerChallenge.id, challenge.path,
-                                                      challenge.name, CHALLENGE_PORT)
+                                                      challenge.name, CHALLENGE_PORT,teamid)
 
             return  jsonpickle.encode(challengeDTO), 200
         else:
@@ -62,9 +65,11 @@ def startChallengeWithId(_id):
     #if challenge == None
     return "Error: No Challenge found with this id", 404
 
-def stopChallengeContainerWithId(challengeid):
-    challenge = RunningDockerChallenges.findById(challengeid)
+def stopChallengeContainerWithId(runningchallengeid):
+    challenge = RunningDockerChallenges.findById(runningchallengeid)
     if challenge:
+        if session.get('id') is not challenge.teamid and session['admin'] is False:
+            return "You can't stop a challenge from an other team :)", 401
         return stopChallengeWithName(challenge.name)
     return "No Challenge found with this id", 404
 

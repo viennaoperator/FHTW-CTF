@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session
 import dockerfunctions, utils, config
 
 from config import Config
@@ -20,21 +20,27 @@ def createTables():
 @app.route('/startChallenge/<int:challengeid>')
 @users_only
 def startChallengeWithId(challengeid):
-    return dockerfunctions.startChallengeWithId(challengeid)
+    teamid = session.get('id')
+    return dockerfunctions.startChallengeWithId(challengeid, teamid)
 
 #Stops a specific container and the linked containers
-@app.route('/stopChallengeContainer/<int:challengeid>')
+@app.route('/stopChallengeContainer/<int:runningchallengeid>')
 @users_only
-def stopChallengeContainerWithId(challengeid):
+def stopChallengeContainerWithId(runningchallengeid):
     #TODO: check, if user id matches container id
-    return dockerfunctions.stopChallengeContainerWithId(challengeid)
+    return dockerfunctions.stopChallengeContainerWithId(runningchallengeid)
+
+@app.route('/stopChallenge/<int:challengeid>')
+@users_only
+def stopChallengeWithid(challengeid):
+    pass #TODO
 
 #Stops a specific container and the linked containers
-@app.route('/stopChallengeContainer/<string:name>')
-@users_only
-def stopChallengeContainer(name):
+#@app.route('/stopChallengeContainer/<string:name>')
+#@users_only
+#def stopChallengeContainer(name):
     #TODO: check, if user id matches container user id
-    return dockerfunctions.stopChallengeWithName(name)
+#    return dockerfunctions.stopChallengeWithName(name)
 
 #adds a challenge to the CTF
 @app.route('/addChallenge')
@@ -58,10 +64,22 @@ def removeDockerChallengeByName(name):
 
 #returns all docker challenges
 @app.route('/listAllDockerChallenges', methods=['GET', 'OPTIONS'])
-@users_only
+@admins_only
 def listAllDockerChallenges():
-    #TODO: show user only some information
     return utils.listAllDockerChallenges()
+
+#lists all available challenges for a user
+@app.route('/listMyAvailableChallenges')
+@users_only
+def listAllAvailableChallenges():
+    return utils.listAllAvailableChallenges()
+
+#lists my challenges that are running
+@app.route('/listMyRunningChallenges')
+@users_only
+def listMyRunningChallenges():
+    teamid = session.get('id')
+    return utils.listMyRunningChallenges(teamid)
 
 @app.route('/listAllRunningContainer')
 @admins_only

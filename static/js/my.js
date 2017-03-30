@@ -39,6 +39,9 @@ $(function(){
             data: $('#challenge-form').serialize(),
             success: function(data){
               successMessage("Sucessfully added challenge");
+              $('#myModal').modal('hide');
+              $("#myModal .modal-body input").val("");
+              $("#myModal .modal-body textarea").val("");
             },
             error: function (xhr, ajaxOptions, thrownError){
               console.log(xhr);
@@ -58,7 +61,7 @@ $("#listAllDockerChallenges").click(function(){
         $('#resultTable').bootstrapTable('destroy');
         $('#resultTable').bootstrapTable({
             columns: [{
-                field: 'dockerchallengeID',
+                field: 'id',
                 title: 'ID'
             }, {
                 field: 'name',
@@ -103,7 +106,7 @@ function operateFormatter(value, row, index) {
         'click .start': function(e, value, row, index){
           bootbox.confirm("Do you really want to start this challenge?",
           function(result){ /* your callback code */
-            if(result) startChallenge(row.dockerchallengeID); // confirmed
+            if(result) startChallenge(row.id); // confirmed
           });
         },
         'click .remove': function (e, value, row, index) {
@@ -127,6 +130,9 @@ function startChallenge(id){
     dataType: 'json',
     success: function(result){
       successMessage("started one container on port: " + result.port);
+    },
+    error: function (xhr, ajaxOptions, thrownError){
+      errorMessage("container couldn't be started");
     }
     });
 }
@@ -137,7 +143,10 @@ function removeChallenge(id){
     url: "http://localhost:5000/removeDockerChallenge/" + id,
     dataType: 'json',
     success: function(result){
-      successMessage("started one container on port: " + result.port);
+      successMessage("challenge removed");
+    },
+    error: function (xhr, ajaxOptions, thrownError){
+      errorMessage("container couldn't be removed");
     }
     });
 }
@@ -170,6 +179,12 @@ $("#listAllRunningContainer").click(function(){
             }, {
                 field: 'port',
                 title: 'Port',
+                align: 'center',
+                valign: 'middle',
+                sortable: true,
+            },{
+                field: 'teamid',
+                title: 'Team ID',
                 align: 'center',
                 valign: 'middle',
                 sortable: true,

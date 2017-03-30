@@ -1,5 +1,5 @@
 from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
-from modelsDTO import ChallengesDTO, DockerChallengesDTO, RunningDockerChallengesDTO
+from modelsDTO import ChallengesDTO, DockerChallengesDTO, RunningDockerChallengesDTO, AvailableChallengesDTO
 import config
 import jsonpickle, os, sys
 if os.name == 'posix' and sys.version_info[0] < 3:
@@ -47,7 +47,7 @@ def listAllRunningContainer():
     challengesDTO = []
     for challenge in challenges:
         challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
-                                    challenge.name, challenge.port)
+                                    challenge.name, challenge.port, challenge.teamid)
         challengesDTO.append(challengeDTO)
     #return object as json
     return jsonpickle.encode(challengesDTO)
@@ -131,3 +131,24 @@ def cleanRepoOfChallenge(DockerChallenges):
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
                             shell=True)
+
+def listAllAvailableChallenges():
+    dockerchallenges = DockerChallenges.getAll()
+    challengesDTO = []
+    for challenge in dockerchallenges:
+        chal = Challenges.findById(challenge.chal)
+        if chal.hidden is False:
+            challengeDTO = AvailableChallengesDTO(chal.id, challenge.id,
+                                        chal.name, chal.description)
+            challengesDTO.append(challengeDTO)
+    #return object as json
+    return jsonpickle.encode(challengesDTO)
+
+def listMyRunningChallenges(teamid):
+    runningChallenges = RunningDockerChallenges.findByTeamId(teamid)
+    runningChallegesDTO = []
+    for challenge in runningChallenges:
+        challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
+                                                  challenge.name, challenge.port)
+        challengesDTO.append(challengeDTO)
+    return jsonpickle.encode(runningChallegesDTO)
