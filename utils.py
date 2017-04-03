@@ -1,5 +1,5 @@
 from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
-from modelsDTO import ChallengesDTO, DockerChallengesDTO, RunningDockerChallengesDTO, AvailableChallengesDTO
+from modelsDTO import ChallengesDTO, DockerChallengesDTO, RunningDockerChallengesDTO, RunningDockerChallengesAdminDTO, AvailableChallengesDTO
 import config
 import jsonpickle, os, sys
 if os.name == 'posix' and sys.version_info[0] < 3:
@@ -48,19 +48,10 @@ def listAllRunningContainer():
     #transfer object to data transfer object
     challengesDTO = []
     for challenge in challenges:
-        challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
-                                    challenge.name, challenge.port, challenge.teamid)
-        challengesDTO.append(challengeDTO)
-    #return object as json
-    return jsonpickle.encode(challengesDTO)
-
-def listAllRunningContainerOfChallenge(challengeid):
-    challenges = RunningDockerChallenges.findByChallengeId(challengeid)
-
-    challengesDTO = []
-    for challenge in challenges:
-        challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
-                                    challenge.name, challenge.port)
+        key = Keys.findById(challenge.key)
+        challengeDTO = RunningDockerChallengesAdminDTO(challenge.id, challenge.path,
+                                    challenge.name, challenge.port, challenge.teamid,
+                                    challenge.startDate.ctime(), key.flag)
         challengesDTO.append(challengeDTO)
     #return object as json
     return jsonpickle.encode(challengesDTO)
@@ -115,24 +106,28 @@ def removeDockerChallengeByName(name):
     challenge = DockerChallenges.findByName(name)
     cleanRepoOfChallenge(challenge)
     challenge.deleteFromDb()
-    return { "result" :  "Successful removed"}
+    return "Successfully removed", 200
 
 def removeDockerChallengeById(challengeid):
     dockerchallenge = DockerChallenges.findById(challengeid)
     cleanRepoOfChallenge(dockerchallenge)
     challenge = Challenges.findById(dockerchallenge.chal)
     if dockerchallenge:
+        print "update dockerchallenge table"
         dockerchallenge.deleteFromDb()
     if challenge:
+        print "update challenge table"
         challenge.deleteFromDb()
-    #return json
-    return { "result" :  "Successful removed"}
+    return "Successfully removed", 200
 
 def cleanRepoOfChallenge(DockerChallenges):
-    proc = subprocess.Popen('rm -r {}'.format(DockerChallenges.path),
+    print "remove repo: " + DockerChallenges.path
+    proc = subprocess.Popen('rm -f -r {}'.format(DockerChallenges.path),
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
-                            shell=True)
+                            shell=True, cwd=config.challengesRootPath)
+    output , error = proc.communicate()
+    print "repo removed"
 
 def listAllAvailableChallenges():
     dockerchallenges = DockerChallenges.getAll()
@@ -154,7 +149,7 @@ def listMyRunningChallenges(teamid):
         challengeDTO = RunningDockerChallengesDTO(challenge.id, challenge.path,
                                                   challenge.name, challenge.port,
                                                   challenge.teamid,chal.id,
-                                                  chal.description)
+                                                  chal.description, challenge.startDate)
         runningChallegesDTO.append(challengeDTO)
     return jsonpickle.encode(runningChallegesDTO)
 
@@ -168,7 +163,7 @@ def checkAvailableHttp(challengeid, teamid):
             challengeDTO = RunningDockerChallengesDTO(runningChallenge.id, runningChallenge.path,
                                                       runningChallenge.name, runningChallenge.port,
                                                       runningChallenge.teamid,chal.id,
-                                                      chal.description)
+                                                      chal.description, challenge.startDate)
             return jsonpickle.encode(challengeDTO)
         return "Not available yet", 500
     return "No challenge with this id found", 404

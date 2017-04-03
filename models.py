@@ -72,14 +72,16 @@ class RunningDockerChallenges(BaseModel):
     teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
     chal = db.Column(db.Integer, db.ForeignKey('challenges.id'))
     key = db.Column(db.Integer, db.ForeignKey('keys.id')) #flag
+    startDate = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    def __init__(self, path, name, port, teamid, chal, key):
+    def __init__(self, path, name, port, teamid, chal, key, startDate):
         self.path = path
         self.name = name
         self.port = port
         self.teamid = teamid
         self.chal = chal
         self.key = key
+        self.startDate = startDate
 
     @classmethod
     def findByName(cls, name):
@@ -127,3 +129,7 @@ class Keys(BaseModel):
         self.chal = chal
         self.flag = flag
         self.key_type = key_type
+
+    @classmethod
+    def findByChal(cls, chal):
+        return cls.query.filter_by(chal=chal)

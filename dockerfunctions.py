@@ -10,9 +10,11 @@ import config
 from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
 from modelsDTO import ChallengesDTO, RunningDockerChallengesDTO
 from flask import session
-import jsonpickle
+import jsonpickle, datetime
 
 def startChallengeWithId(_id,teamid):
+    print datetime.datetime.utcnow
+
     challenge = DockerChallenges.findByChal(_id)
     print challenge
     if challenge:
@@ -55,11 +57,12 @@ def startChallengeWithId(_id,teamid):
             key.saveToDb()
             runningDockerChallenge = RunningDockerChallenges(challenge.path,
                                                             name, CHALLENGE_PORT,
-                                                            teamid, _id, key.id)
+                                                            teamid, _id, key.id, None) # None = Current Date
+
             runningDockerChallenge.saveToDb()
-            challengeDTO = RunningDockerChallengesDTO(runningDockerChallenge.id, challenge.path,
-                                                      challenge.name, CHALLENGE_PORT,teamid,
-                                                      challenge.id, None)
+            challengeDTO = RunningDockerChallengesDTO(runningDockerChallenge.id, runningDockerChallenge.path,
+                                                      runningDockerChallenge.name, runningDockerChallenge.port,
+                                                      runningDockerChallenge.teamid, challenge.id, None, runningDockerChallenge.startDate)# runningDockerChallenge.startDate)
 
             return  jsonpickle.encode(challengeDTO), 200
         else:
@@ -126,6 +129,11 @@ def stopAndRemoveAllContainer():
 
     if error is None and error2 is None:
         for container in allRunningContainer:
+            #deletes all keys/flags of the same challenge as a cleanup
+            keys = Keys.findByChal(container.chal)
+            for key in keys:
+                key.deleteFromDb()
+            #delete container
             container.deleteFromDb()
 
         return "Successfully stopped and removed all container", 200

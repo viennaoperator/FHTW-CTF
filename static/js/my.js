@@ -53,6 +53,17 @@ $(function(){
     });
 });
 
+//check if name is alphanumeric
+$("#challengeName").keyup(function(){
+  if (/^[a-z0-9]+$/i.test($(this).val())) {
+    $("#challengeNameDiv").removeClass("has-error");
+  }
+  else {
+    $("#challengeNameDiv").addClass("has-error");
+  }
+});
+
+//ADD Function END
 $("#listAllDockerChallenges").click(function(){
     $.ajax({
       url: "http://localhost:5000/listAllDockerChallenges",
@@ -141,7 +152,6 @@ function removeChallenge(id){
   infoMessage("Trying to remove challenge " + id)
   $.ajax({
     url: "http://localhost:5000/removeDockerChallenge/" + id,
-    dataType: 'json',
     success: function(result){
       successMessage("challenge removed");
     },
@@ -156,6 +166,7 @@ $("#listAllRunningContainer").click(function(){
       url: "http://localhost:5000/listAllRunningContainer",
       dataType: 'json',
       success: function(result){
+        console.log(result);
         $("#stop").show()
         $('#resultTable').bootstrapTable('destroy');
         $('#resultTable').bootstrapTable({
@@ -189,6 +200,13 @@ $("#listAllRunningContainer").click(function(){
                 valign: 'middle',
                 sortable: true,
             },{
+                field: 'flag',
+                title: 'Flag'
+            },{
+                field: 'startDate',
+                title: 'Container Start'
+            },
+            {
                 field: 'path',
                 title: 'OS Path'
             }

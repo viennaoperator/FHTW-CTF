@@ -39,8 +39,9 @@ class RunningDockerChallengesDTO():
     teamid = None
     chal = None
     description = None
+    startDate = None
 
-    def __init__(self, id, path, name, port, teamid, chal, description):
+    def __init__(self, id, path, name, port, teamid, chal, description, startDate):
         self.id = id
         self.path = path
         self.name = name
@@ -48,6 +49,25 @@ class RunningDockerChallengesDTO():
         self.teamid = teamid
         self.chal = chal
         self.description = description
+        self.startDate = startDate
+
+class RunningDockerChallengesAdminDTO():
+    _id = None
+    path = None
+    name = None
+    port = None
+    teamid = None
+    startDate = None
+    flag = None
+
+    def __init__(self, id, path, name, port, teamid, startDate, flag):
+        self.id = id
+        self.path = path
+        self.name = name
+        self.port = port
+        self.teamid = teamid
+        self.startDate = startDate
+        self.flag = flag
 
 class AvailableChallengesDTO():
     challengeid = None

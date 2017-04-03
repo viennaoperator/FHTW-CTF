@@ -175,9 +175,6 @@ function checkAvailabe(runningchallengeid){
       dataType: 'json',
       success: function(data){
         markChallengesAsAvailable(data);
-      },
-      error: function (xhr, ajaxOptions, thrownError){
-        errorMessage(thrownError);
       }
   });
 }

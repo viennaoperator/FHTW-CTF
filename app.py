@@ -79,12 +79,6 @@ def listMyRunningChallenges():
 def listAllRunningContainer():
     return utils.listAllRunningContainer()
 
-#not needed?
-@app.route('/listAllRunningContainerOfChallenge/<int:challengeid>')
-@admins_only
-def listAllRunningContainerOfChallenge(challengeid):
-    return utils.listAllRunningContainerOfChallenge(challengeid)
-
 @app.route('/stopAndRemoveAllContainer')
 @admins_only
 def stopAndRemoveAllContainer():
