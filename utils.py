@@ -1,13 +1,11 @@
 from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
 from modelsDTO import ChallengesDTO, DockerChallengesDTO, RunningDockerChallengesDTO, RunningDockerChallengesAdminDTO, AvailableChallengesDTO
-import config
+import config, urllib, datetime, dockerfunctions
 import jsonpickle, os, sys
 if os.name == 'posix' and sys.version_info[0] < 3:
     import subprocess32 as subprocess
 else:
     import subprocess
-
-import urllib
 
 def listAllChallenges():
     challenges = Challenges.getAll()
@@ -163,7 +161,23 @@ def checkAvailableHttp(challengeid, teamid):
             challengeDTO = RunningDockerChallengesDTO(runningChallenge.id, runningChallenge.path,
                                                       runningChallenge.name, runningChallenge.port,
                                                       runningChallenge.teamid,chal.id,
-                                                      chal.description, challenge.startDate)
+                                                      chal.description, runningChallenge.startDate)
             return jsonpickle.encode(challengeDTO)
         return "Not available yet", 500
     return "No challenge with this id found", 404
+
+#checks if container are running longer than specified time and shuts them
+#down (deletes flags, containers, and shutdown instances)
+def checkRunTime():
+    runningChallenges = RunningDockerChallenges.getAll()
+    for challenge in runningChallenges:
+        date = datetime.datetime.now() - challenge.startDate
+        hours = date.total_seconds() / 60 / 60
+        print "Hours since the start of Challenge " + challenge.name + ": " + str(hours)
+        if hours > config.shutDownHours:
+            dockerfunctions.stopChallengeWithName(challenge.name)
+    return "check completed!", 200
+
+#returns config preference
+def getShutDownTime():
+    return str(config.shutDownHours)

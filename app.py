@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = Config.SECRET_KEY
 app.register_blueprint(auth)
 
-#create database tables
+#create database tables for initialization
 @app.before_first_request
 def createTables():
     db.create_all()
@@ -29,6 +29,7 @@ def startChallengeWithId(challengeid):
 def stopChallengeContainerWithId(runningchallengeid):
     return dockerfunctions.stopChallengeContainerWithId(runningchallengeid)
 
+#stops the challenge with a specific id which is assigend to the team
 @app.route('/stopChallenge/<int:challengeid>')
 @users_only
 def stopChallengeWithid(challengeid):
@@ -74,11 +75,13 @@ def listMyRunningChallenges():
     teamid = session.get('id')
     return utils.listMyRunningChallenges(teamid)
 
+#returns all running containers
 @app.route('/listAllRunningContainer')
 @admins_only
 def listAllRunningContainer():
     return utils.listAllRunningContainer()
 
+#deletes all containers with their flags
 @app.route('/stopAndRemoveAllContainer')
 @admins_only
 def stopAndRemoveAllContainer():
@@ -90,6 +93,16 @@ def stopAndRemoveAllContainer():
 def checkAvailable(challengeid):
     teamid = session.get('id')
     return utils.checkAvailableHttp(challengeid,teamid)
+
+#checks, if container are running longer than configured and shuts them down
+@app.route('/checkRunTime')
+def checkRunTime():
+    return utils.checkRunTime()
+
+#returns the configured shutdown time to the client
+@app.route('/getShutDownTime')
+def getShutDownTime():
+    return utils.getShutDownTime()
 
 if __name__ == '__main__':
     from db import db

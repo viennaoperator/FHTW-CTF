@@ -141,9 +141,9 @@ function startChallenge(id){
   $.ajax({
       url: 'http://localhost:5000/startChallenge/' + id, //this is the submit URL
       type: 'GET',
-      dataType: 'json',
       success: function(data){
         successMessage("Successful started...");
+        refreshChallenges();
       },
       error: function (xhr, ajaxOptions, thrownError){
         errorMessage(thrownError);
@@ -156,10 +156,9 @@ function stopChallenge(id){
   $.ajax({
       url: 'http://localhost:5000/stopChallenge/' + id, //this is the submit URL
       type: 'GET',
-      dataType: 'json',
       success: function(data){
         successMessage("Successful stopped...");
-        displayChallenges();
+        refreshChallenges();
       },
       error: function (xhr, ajaxOptions, thrownError){
         errorMessage(thrownError);
