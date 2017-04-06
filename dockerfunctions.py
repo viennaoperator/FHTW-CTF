@@ -127,18 +127,20 @@ def stopAndRemoveAllContainer():
     if allRunningContainer is None:
         return "Successfully stopped and removed all container", 200
 
-    if error is None and error2 is None:
-        for container in allRunningContainer:
-            #deletes all keys/flags of the same challenge as a cleanup
-            keys = Keys.findByChal(container.chal)
-            for key in keys:
-                key.deleteFromDb()
-            #delete container
-            container.deleteFromDb()
+    chalIds = []
 
-        return "Successfully stopped and removed all container", 200
-    else:
-        return error + "\n\n" + error2, 500
+    for container in allRunningContainer:
+        chalIds.append(container.chal)
+        #delete container
+        container.deleteFromDb()
+
+    #deletes all keys/flags of the type of the deleted challenge as a cleanup
+    for chal in chalIds:
+        keys = Keys.findByChal(chal)
+        for key in keys:
+            key.deleteFromDb()
+
+    return "Successfully stopped and removed all container", 200
 
 #generates a random flag for ctf
 def flagGenerator(size=10, chars=string.ascii_uppercase + string.ascii_lowercase + string.digits):
