@@ -3,7 +3,7 @@ from models import Teams
 from db import db
 from passlib.hash import bcrypt_sha256
 
-from config import Config
+import config
 
 import hashlib, os, functools
 
@@ -29,8 +29,14 @@ def login():
                 db.session.close()
 
                 if team.admin:
-                    return render_template('admin.html')
-                return render_template('user.html')
+                    return render_template('admin.html',
+                                        urlFromPythonConfig=config.PORTAL_URL,
+                                        portFromPythonConfig=config.PORTAL_PORT,
+                                        portFromCTFDConfig=config.CTFD_PORT)
+                return render_template('user.html',
+                                        urlFromPythonConfig=config.PORTAL_URL,
+                                        portFromPythonConfig=config.PORTAL_PORT,
+                                        portFromCTFDConfig=config.CTFD_PORT)
 
             else: # This user exists but the password is wrong
                 errors.append("Your username or password is incorrect")

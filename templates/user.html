@@ -15,7 +15,16 @@
       <script src="{{ request.script_root }}/static/js/lib/jquery.matchHeight.js"></script>
       <!-- Ping Webserver via Javascript -->
       <script src="{{ request.script_root }}/static/js/lib/ping.js"/></script>
+
       <!-- my JS -->
+      <script>
+        var urlFromPythonConfig = '{{ urlFromPythonConfig }}';
+        var portFromPythonConfig = '{{ portFromPythonConfig}}';
+        $(function() {
+          var submitFlagLink = "http://" + urlFromPythonConfig + ":" + '{{ portFromCTFDConfig}}' + '/challenges';
+          $("#submitAnswerLink").attr("href", submitFlagLink);
+        });
+      </script>
       <script src="{{ request.script_root }}/static/js/user.js"/></script>
 </head>
 <body>
@@ -34,10 +43,12 @@
           <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
           refresh
         </button>
-        <button id="submitAnswer" class="col-sm-2 text-center admin-menu">
-          <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-          submit flag
-        </button>
+        <a id="submitAnswerLink">
+          <button id="submitAnswer" class="col-sm-2 text-center admin-menu">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            submit flag
+          </button>
+        </a>
       </div>
     <!--  <div class="row">
         <div class="col-sm-4 text-center challenge stopped">
