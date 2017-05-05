@@ -18,25 +18,20 @@ def login():
         if team:
             if team and bcrypt_sha256.verify(request.form['password'], team.password):
                 try:
-                    session.regenerate() # NO SESSION FIXATION FOR YOU
+                    pass
+                    #session.regenerate() # NO SESSION FIXATION FOR YOU
                 except:
                     pass
-                    #return render_template('login.html', errors=errors)
-                session['username'] = team.name
-                session['id'] = team.id
-                session['admin'] = team.admin
-                session['nonce'] = sha512(os.urandom(10))
+
+                session['fhtw_username'] = team.name
+                session['fhtw_id'] = team.id
+                session['fhtw_admin'] = team.admin
+                session['fhtw_nonce'] = sha512(os.urandom(10))
                 db.session.close()
 
                 if team.admin:
-                    return render_template('admin.html',
-                                        urlFromPythonConfig=config.PORTAL_URL,
-                                        portFromPythonConfig=config.PORTAL_PORT,
-                                        portFromCTFDConfig=config.CTFD_PORT)
-                return render_template('user.html',
-                                        urlFromPythonConfig=config.PORTAL_URL,
-                                        portFromPythonConfig=config.PORTAL_PORT,
-                                        portFromCTFDConfig=config.CTFD_PORT)
+                    return render_template('admin.html', urlFromPythonConfig=config.PORTAL_URL, portFromPythonConfig=config.PORTAL_PORT, portFromCTFDConfig=config.CTFD_PORT)
+                return render_template('user.html', urlFromPythonConfig=config.PORTAL_URL, portFromPythonConfig=config.PORTAL_PORT, portFromCTFDConfig=config.CTFD_PORT)
 
             else: # This user exists but the password is wrong
                 errors.append("Your username or password is incorrect")
@@ -58,17 +53,17 @@ def logout():
 def landingPage():
     if authed():
         if is_admin():
-            return render_template('admin.html')
-        return render_template('user.html')
+            return render_template('admin.html', urlFromPythonConfig=config.PORTAL_URL, portFromPythonConfig=config.PORTAL_PORT, portFromCTFDConfig=config.CTFD_PORT)
+        return render_template('user.html', urlFromPythonConfig=config.PORTAL_URL, portFromPythonConfig=config.PORTAL_PORT, portFromCTFDConfig=config.CTFD_PORT)
     db.session.close()
     return render_template('login.html')
 
 def authed():
-    return bool(session.get('id', False))
+    return bool(session.get('fhtw_id', False))
 
 def is_admin():
     if authed():
-        return session['admin']
+        return session['fhtw_admin']
     else:
         return False
 

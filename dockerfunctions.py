@@ -74,7 +74,7 @@ def startChallengeWithId(_id,teamid):
 def stopChallengeContainerWithId(runningchallengeid):
     challenge = RunningDockerChallenges.findById(runningchallengeid)
     if challenge:
-        if session.get('id') is not challenge.teamid and session['admin'] is False:
+        if session.get('fhtw_id') is not challenge.teamid and session['fhtw_admin'] is False:
             return "You can't stop a challenge from an other team :)", 401
         return stopChallengeWithName(challenge.name)
     return "No Challenge found with this id", 404

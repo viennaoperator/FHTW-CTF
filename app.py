@@ -20,7 +20,7 @@ def createTables():
 @app.route('/startChallenge/<int:challengeid>')
 @users_only
 def startChallengeWithId(challengeid):
-    teamid = session.get('id')
+    teamid = session.get('fhtw_id')
     return dockerfunctions.startChallengeWithId(challengeid, teamid)
 
 #Stops a specific container and the linked containers
@@ -33,7 +33,7 @@ def stopChallengeContainerWithId(runningchallengeid):
 @app.route('/stopChallenge/<int:challengeid>')
 @users_only
 def stopChallengeWithid(challengeid):
-    teamid = session.get('id')
+    teamid = session.get('fhtw_id')
     return dockerfunctions.stopChallengeWithid(challengeid, teamid)
 
 #adds a challenge to the CTF
@@ -72,7 +72,7 @@ def listAllAvailableChallenges():
 @app.route('/listMyRunningChallenges')
 @users_only
 def listMyRunningChallenges():
-    teamid = session.get('id')
+    teamid = session.get('fhtw_id')
     return utils.listMyRunningChallenges(teamid)
 
 #returns all running containers
@@ -91,7 +91,7 @@ def stopAndRemoveAllContainer():
 @app.route('/checkAvailable/<int:challengeid>')
 @users_only
 def checkAvailable(challengeid):
-    teamid = session.get('id')
+    teamid = session.get('fhtw_id')
     return utils.checkAvailableHttp(challengeid,teamid)
 
 #checks, if container are running longer than configured and shuts them down

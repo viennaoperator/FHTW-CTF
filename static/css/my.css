@@ -7,7 +7,7 @@ body {
   float: left;
   height: 115px;
   padding: 10px;
-  font-size: 20px;
+  font-size: 18px;
   text-align: center;
   background-color: #f9f9f9;
   border: 5px solid #fff;
@@ -142,4 +142,10 @@ div#login-container div {
 
 a#logout {
     padding-top: 29px;
+}
+
+@media only screen and (max-width: 1199px) {
+  .bootstrap-table {
+      margin-top: 140px;
+  }
 }
