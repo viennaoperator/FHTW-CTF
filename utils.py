@@ -1,4 +1,4 @@
-from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges
+from models import Challenges, Keys, DockerChallenges, RunningDockerChallenges, Solves
 from modelsDTO import ChallengesDTO, DockerChallengesDTO, RunningDockerChallengesDTO, RunningDockerChallengesAdminDTO, AvailableChallengesDTO
 import config, urllib, datetime, dockerfunctions
 import jsonpickle, os, sys
@@ -69,7 +69,7 @@ def addChallenge(name,category,description,value,githuburl,hidden,max_attempts):
     proc = subprocess.Popen('git clone {}'.format(githuburl),
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
-                            shell=True, cwd=config.challengesRootPath)
+                            shell=False, cwd=config.challengesRootPath)
     output , error =  proc.communicate()
 
     if error is None:
@@ -166,11 +166,16 @@ def checkAvailableHttp(challengeid, teamid):
         return "Not available yet", 500
     return "No challenge with this id found", 404
 
-#checks if container are running longer than specified time and shuts them
-#down (deletes flags, containers, and shutdown instances)
+#checks if container are running longer than specified time or already solved
+#and shuts them down (deletes flags, containers, and shutdown instances)
 def checkRunTime():
     runningChallenges = RunningDockerChallenges.getAll()
     for challenge in runningChallenges:
+        keys = Keys.findById(challenge.key)
+        solved = Solves.findByFlag(keys.flag)
+        if solved:
+            dockerfunctions.stopChallengeWithName(challenge.name)
+
         date = datetime.datetime.now() - challenge.startDate
         hours = date.total_seconds() / 60 / 60
         print "Hours since the start of Challenge " + challenge.name + ": " + str(hours)
