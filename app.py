@@ -107,4 +107,4 @@ def getShutDownTime():
 if __name__ == '__main__':
     from db import db
     db.init_app(app)
-    app.run(port=5000, host='0.0.0.0',  debug=True)
+    app.run(port=config.PORTAL_PORT, host='0.0.0.0',  debug=True)

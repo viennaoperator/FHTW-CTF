@@ -1,9 +1,9 @@
 import os
 
-PORTAL_URL = "chal.at"
+PORTAL_URL = "localhost"
 PORTAL_PORT = "5000"
 CTFD_PORT = "8000"
-CHALLENGE_URL = "ctf.at"
+CHALLENGE_URL = "localhost"
 challengeprefix = "challenge" #container name prefix - don't use special characters
 challengesRootPath = "/Users/Mac_Harii/Desktop/challenges" #OS path to challenges
 databaseUrl = "mysql+pymysql://root@localhost:3306/ctfd"
