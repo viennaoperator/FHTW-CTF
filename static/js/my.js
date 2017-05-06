@@ -34,7 +34,7 @@ $(function(){
         e.preventDefault();
         infoMessage("Trying to add your challenge...");
         $.ajax({
-            url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig +  '/addChallenge', //this is the submit URL
+            url: '/addChallenge', //this is the submit URL
             type: 'GET', //or POST
             data: $('#challenge-form').serialize(),
             success: function(data){
@@ -66,7 +66,7 @@ $("#challengeName").keyup(function(){
 //ADD Function END
 $("#listAllDockerChallenges").click(function(){
     $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/listAllDockerChallenges',
+      url: '/listAllDockerChallenges',
       dataType: 'json',
       success: function(result){
         $('#resultTable').bootstrapTable('destroy');
@@ -137,7 +137,7 @@ function operateFormatter(value, row, index) {
 function startChallenge(id){
   infoMessage("Trying to start challenge " + id);
   $.ajax({
-    url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/startChallenge/' + id,
+    url: '/startChallenge/' + id,
     dataType: 'json',
     success: function(result){
       successMessage("started one container on port: " + result.port);
@@ -151,7 +151,7 @@ function startChallenge(id){
 function removeChallenge(id){
   infoMessage("Trying to remove challenge " + id)
   $.ajax({
-    url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/removeDockerChallenge/' + id,
+    url: '/removeDockerChallenge/' + id,
     success: function(result){
       successMessage("challenge removed");
     },
@@ -163,7 +163,7 @@ function removeChallenge(id){
 
 $("#listAllRunningContainer").click(function(){
     $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/listAllRunningContainer',
+      url: '/listAllRunningContainer',
       dataType: 'json',
       success: function(result){
         console.log(result);
@@ -223,7 +223,7 @@ $("#stop").click(function () {
   console.log(ids);
   for (var id in ids){
     $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/stopChallengeContainer/' + ids[id],
+      url: '/stopChallengeContainer/' + ids[id],
       success: function(result){
         successMessage("Challenge stopped");
         console.log("Challenge stopped");
@@ -251,7 +251,7 @@ $("#stopAndRemoveAllContainer").click(function (){
     if(result) {
       infoMessage("Trying to stop and remove all challenges ");
       $.ajax({
-        url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/stopAndRemoveAllContainer',
+        url: '/stopAndRemoveAllContainer',
         success: function(result){
           successMessage("All Container stopped & removed!");
         },

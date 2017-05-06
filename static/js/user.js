@@ -21,7 +21,7 @@ var availableChallenges = [], startedChallenges = [];
 function refreshChallenges(){
   infoMessage("loading challenges...")
   $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig +  '/listMyAvailableChallenges', //this is the submit URL
+      url: '/listMyAvailableChallenges', //this is the submit URL
       type: 'GET',
       dataType: 'json',
       success: function(data){
@@ -37,7 +37,7 @@ function refreshChallenges(){
 
 function loadStartedChallenges(){
   $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/listMyRunningChallenges', //this is the submit URL
+      url: '/listMyRunningChallenges', //this is the submit URL
       type: 'GET',
       dataType: 'json',
       success: function(data){
@@ -139,7 +139,7 @@ function markChallengesAsAvailable(challenge){
 function startChallenge(id){
   infoMessage("Starting challenge...")
   $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/startChallenge/' + id, //this is the submit URL
+      url: '/startChallenge/' + id, //this is the submit URL
       type: 'GET',
       success: function(data){
         successMessage("Successful started...");
@@ -154,7 +154,7 @@ function startChallenge(id){
 function stopChallenge(id){
   infoMessage("Stopping challenge...")
   $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/stopChallenge/' + id, //this is the submit URL
+      url:'/stopChallenge/' + id, //this is the submit URL
       type: 'GET',
       success: function(data){
         successMessage("Successful stopped...");
@@ -169,7 +169,7 @@ function stopChallenge(id){
 //service, checks availability of container and then marks them as available in GUI
 function checkAvailabe(runningchallengeid){
   $.ajax({
-      url: 'http://' + urlFromPythonConfig + ':' + portFromPythonConfig + '/checkAvailable/' + runningchallengeid, //this is the submit URL
+      url: '/checkAvailable/' + runningchallengeid, //this is the submit URL
       type: 'GET',
       dataType: 'json',
       success: function(data){
