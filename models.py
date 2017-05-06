@@ -133,3 +133,18 @@ class Keys(BaseModel):
     @classmethod
     def findByChal(cls, chal):
         return cls.query.filter_by(chal=chal)
+
+class Solves(db.Model):
+    __table_args__ = (db.UniqueConstraint('chalid', 'teamid'), {})
+    id = db.Column(db.Integer, primary_key=True)
+    chalid = db.Column(db.Integer, db.ForeignKey('challenges.id'))
+    teamid = db.Column(db.Integer, db.ForeignKey('teams.id'))
+    ip = db.Column(db.Integer)
+    flag = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    team = db.relationship('Teams', foreign_keys="Solves.teamid", lazy='joined')
+    chal = db.relationship('Challenges', foreign_keys="Solves.chalid", lazy='joined')
+
+    @classmethod
+    def findByFlag(cls,flag):
+        return cls.query.filter_by(flag=flag)
