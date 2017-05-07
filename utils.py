@@ -173,7 +173,7 @@ def checkRunTime():
     for challenge in runningChallenges:
         keys = Keys.findById(challenge.key)
         solved = Solves.findByFlag(keys.flag)
-        if solved.id:
+        if solved.first():
             print "stop challenge " + challenge.name + "because it's already solved!"
             dockerfunctions.stopChallengeWithName(challenge.name)
 
